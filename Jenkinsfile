@@ -11,8 +11,10 @@ pipeline {
     stages {
         stage('build') {
             steps {
+                 withEnv(["JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64", "PATH=/usr/lib/jvm/java-11-openjdk-amd64/bin:${env.PATH}"]) {
                sh 'mvn clean deploy'
             }
+        }
         }
 
        stage('SonarQube analysis') {
