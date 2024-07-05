@@ -21,7 +21,9 @@ pipeline {
             }
         steps{
         withSonarQubeEnv('valaxy-sonarqube-server') { // If you have configured more than one global server connection, you can specify its name
+        withEnv(["JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64", "PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:${env.PATH}"]) {
           sh "${scannerHome}/bin/sonar-scanner"
+        }
         }
         }
       }
