@@ -12,11 +12,21 @@ pipeline {
         stage('build') {
             steps {
                  withEnv(["JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64", "PATH=/usr/lib/jvm/java-11-openjdk-amd64/bin:${env.PATH}"]) {
-               sh 'mvn clean deploy'
+                echo "---------------build started----------------"
+                sh 'mvn clean deploy'
+                echo "--------------unit test started-------------"
             }
         }
         }
 
+       stage("test") {
+           steps{
+               echo "---------------unit test started----------------"
+               sh 'mvn surefire-report:report'
+               echo "--------------unit test completed-------------"
+           }
+       }
+        
        stage('SonarQube analysis') {
             environment {
               scannerHome = tool 'valaxy-sonar-scanner'
