@@ -28,31 +28,30 @@ pipeline {
        }
         
        stage('SonarQube analysis') {
-            environment {
-              scannerHome = tool 'valaxy-sonar-scanner'
-            }
-        steps{
-        withSonarQubeEnv('valaxy-sonarqube-server') { // If you have configured more than one global server connection, you can specify its name
-        withEnv(["JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64", "PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:${env.PATH}"]) {
-          sh "${scannerHome}/bin/sonar-scanner"
-        }
-        }
-        }
+                environment { scannerHome = tool 'valaxy-sonar-scanner' }
+                steps{
+                withSonarQubeEnv('valaxy-sonarqube-server') { // If you have configured more than one global server connection, you can specify its name
+                    withEnv(["JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64", "PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:${env.PATH}"]) {
+                          sh "${scannerHome}/bin/sonar-scanner"
+                        }
+                    }
+                }
+       }
 
     stage("Quality Gate"){
-    steps {
-        script {
-        timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
-    def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
-    if (qg.status != 'OK') {
-      error "Pipeline aborted due to quality gate failure: ${qg.status}"
-    }
-  }
-}
-    }
-  }
-           
+        steps {    
+                script {    
+                timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
+                    def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
+                    if (qg.status != 'OK') {
+                      error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                    }
+                  }
+            }
+        }
       }
+           
+      
         
     }
 }
