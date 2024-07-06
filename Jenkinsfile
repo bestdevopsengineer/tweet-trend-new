@@ -107,6 +107,7 @@ stage(" Docker Build ") {
             stage("deploy"){
                 steps{
                     script {
+                        sh 'chmod +x deploy.sh'
                         sh './deploy.sh'
                     }
                 }
